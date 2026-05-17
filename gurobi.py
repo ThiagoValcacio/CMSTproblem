@@ -94,21 +94,164 @@ for i in clientes:
 # Para todo subconjunto S dos clientes:
 # soma dos arcos internos a S <= |S| - ceil(|S| / K)
 #
-# Como n = 10, é viável gerar todos os subconjuntos.
-for tamanho in range(2, n + 1):
-    for S_tuple in combinations(clientes, tamanho):
-        S = set(S_tuple)
 
-        model.addConstr(
-            gp.quicksum(
-                x[i, j]
-                for i in S
-                for j in S
-                if i != j
-            ) <= len(S) - math.ceil(len(S) / K),
-            name=f"packing_{'_'.join(map(str, S_tuple))}"
-        )
+for S_tuple in combinations(clientes, 2):
+    S = set(S_tuple)
 
+    model.addConstr(
+        gp.quicksum(
+            x[i, j]
+            for i in S
+            for j in S
+            if i != j
+        ) <= len(S) - math.ceil(len(S) / K),
+        name=f"packing_card2_{'_'.join(map(str, S_tuple))}"
+    )
+
+# # ============================================================
+# # Packing para S = {1,4,5,6,7,9,10}
+# # ============================================================
+
+# S1 = {1, 4, 5, 6, 7, 9, 10}
+
+# model.addConstr(
+#     gp.quicksum(
+#         x[i, j]
+#         for i in S1
+#         for j in S1
+#         if i != j
+#     ) <= len(S1) - math.ceil(len(S1) / K),
+#     name="packing_S_1_4_5_6_7_9_10"
+# )
+
+
+# # ============================================================
+# # Packing para S = {1,5,4,10}
+# # ============================================================
+
+# S2 = {1, 5, 4, 10}
+
+# model.addConstr(
+#     gp.quicksum(
+#         x[i, j]
+#         for i in S2
+#         for j in S2
+#         if i != j
+#     ) <= len(S2) - math.ceil(len(S2) / K),
+#     name="packing_S_1_5_4_10"
+# )
+
+# # ============================================================
+# # Packing para S = {9,4,3,7,10}
+# # ============================================================
+
+# S = {9, 4, 3, 7, 10}
+
+# model.addConstr(
+#     gp.quicksum(
+#         x[i, j]
+#         for i in S
+#         for j in S
+#         if i != j
+#     ) <= len(S) - math.ceil(len(S) / K),
+#     name="packing_S_9_4_3_7_10"
+# )
+
+# ============================================================
+# Multistar para S = {1,4,5,6,7,9,10}
+# ============================================================
+
+S1 = {1, 4, 5, 6, 7, 9, 10}
+fora_S1 = set(clientes) - S1
+
+model.addConstr(
+    K * gp.quicksum(
+        x[i, j]
+        for i in S1
+        for j in S1
+        if i != j
+    )
+    +
+    gp.quicksum(
+        x[i, j]
+        for i in S1
+        for j in fora_S1
+    )
+    <= len(S1) * (K - 1),
+    name="multistar_S_1_4_5_6_7_9_10"
+)
+
+# ============================================================
+# Multistar para S = {1,5,4,10}
+# ============================================================
+
+S2 = {1, 5, 4, 10}
+fora_S2 = set(clientes) - S2
+
+model.addConstr(
+    K * gp.quicksum(
+        x[i, j]
+        for i in S2
+        for j in S2
+        if i != j
+    )
+    +
+    gp.quicksum(
+        x[i, j]
+        for i in S2
+        for j in fora_S2
+    )
+    <= len(S2) * (K - 1),
+    name="multistar_S_1_5_4_10"
+)
+
+# ============================================================
+# Multistar para S = {9,4,3,7,10}
+# ============================================================
+
+S3 = {9, 4, 3, 7, 10}
+fora_S3 = set(clientes) - S3
+
+model.addConstr(
+    K * gp.quicksum(
+        x[i, j]
+        for i in S3
+        for j in S3
+        if i != j
+    )
+    +
+    gp.quicksum(
+        x[i, j]
+        for i in S3
+        for j in fora_S3
+    )
+    <= len(S3) * (K - 1),
+    name="multistar_S_9_4_3_7_10"
+)
+
+# ============================================================
+# Multistar para S = {1,2,5}
+# ============================================================
+
+S4 = {1, 2, 5}
+fora_S4 = set(clientes) - S4
+
+model.addConstr(
+    K * gp.quicksum(
+        x[i, j]
+        for i in S4
+        for j in S4
+        if i != j
+    )
+    +
+    gp.quicksum(
+        x[i, j]
+        for i in S4
+        for j in fora_S4
+    )
+    <= len(S4) * (K - 1),
+    name="multistar_S_1_2_5"
+)
 
 # ============================================================
 # Resolver o modelo
