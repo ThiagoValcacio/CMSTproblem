@@ -43,7 +43,6 @@ A = [(i, j) for i in V for j in V if i != j]
 
 
 def get_forbidden_arcs_by_cost():
-    """Elimina arcos entre clientes que são dominados pelo caminho via raiz."""
     forbidden = set()
     for u, v in combinations(clientes, 2):
         if c[u][v] >= max(c[u][0], c[v][0]):
@@ -54,7 +53,6 @@ def get_forbidden_arcs_by_cost():
 
 
 def forbid_arcs_due_to_root_attachment(forbidden_arcs, x_vals):
-    """Se um nó estiver ligado diretamente à raiz (x[u,0] ~= 1), elimine seus arcos para outros clientes."""
     for u, v in combinations(clientes, 2):
         if x_vals.get((u, 0), 0) >= 1 - 1e-6 or x_vals.get((v, 0), 0) >= 1 - 1e-6:
             forbidden_arcs.add((u, v))
@@ -136,7 +134,6 @@ def add_multistar_constraint(model, x, S, name_suffix=None):
 # Criação do modelo
 # ============================================================
 
-# Candidate eliminations by cost (not applied automatically) - user will decide which to forbid
 candidates = get_forbidden_arcs_by_cost()
 forbidden_arcs = set()
 model, x = build_model(forbidden_arcs)
